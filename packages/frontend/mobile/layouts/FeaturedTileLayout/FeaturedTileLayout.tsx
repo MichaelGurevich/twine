@@ -1,4 +1,4 @@
-import { FeaturedCard } from "@/components";
+import { FeaturedCard } from "@/components/FeaturedCard";
 import { Section } from "@/components/FeaturedCard";
 import React from "react";
 import { ImageSourcePropType } from "react-native";
