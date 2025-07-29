@@ -12,37 +12,26 @@ export type TileContainerProps = {
   type: "normal" | "long" | "wide" | "featured";
 };
 
+const TILE_DIMENSIONS: Record<
+  TileContainerProps["type"],
+  { width: number; height: number }
+> = {
+  normal: { width: NORMAL_TILE_WIDTH, height: NORMAL_TILE_HEIGHT },
+  long: { width: NORMAL_TILE_WIDTH, height: NORMAL_TILE_HEIGHT * 2 },
+  wide: { width: SCREEN_WIDTH - 2, height: NORMAL_TILE_HEIGHT },
+  featured: { width: SCREEN_WIDTH - 2, height: NORMAL_TILE_HEIGHT * 2 },
+};
+
 export const TileContainer = styled(Pressable)<TileContainerProps>`
   ${({ type }) => {
-    let tileWidth = NORMAL_TILE_WIDTH;
-    let tileHeight = NORMAL_TILE_HEIGHT;
-
-    switch (type) {
-      case "long":
-        tileHeight = NORMAL_TILE_HEIGHT * 2; // 2 × 1
-        break;
-
-      case "wide":
-        tileWidth = SCREEN_WIDTH - 2; // any custom width
-        break;
-
-      case "featured":
-        tileWidth = SCREEN_WIDTH - 2;
-        tileHeight = NORMAL_TILE_HEIGHT * 2
-
-      // 'normal' falls through with defaults
-    }
-
+    const { width, height } = TILE_DIMENSIONS[type];
     return css`
-      width: ${tileWidth}px;
-      height: ${tileHeight}px;
+      width: ${width}px;
+      height: ${height}px;
     `;
   }}
 
-  margin-top: 2px;
-  margin-bottom: 2px;
-  margin-right: 2px;
-  margin-left: 2px;
+  margin: 2px;
   border-width: 2px;
   overflow: hidden;
 `;
