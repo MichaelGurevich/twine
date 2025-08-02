@@ -1,45 +1,95 @@
 import React from "react";
 import styled, { css } from "styled-components/native";
-import { Dimensions, Pressable } from "react-native";
+import { Pressable, Dimensions } from "react-native";
+import { Feather } from "phosphor-react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const GAP_SIZE = 8;
-
-const NORMAL_TILE_WIDTH = (SCREEN_WIDTH - GAP_SIZE * 3) / 2;
-const NORMAL_TILE_HEIGHT = NORMAL_TILE_WIDTH;
+const NORMAL_WIDTH = SCREEN_WIDTH / 2;
+const NORMAL_HEIGHT = NORMAL_WIDTH;
 
 export type TileContainerProps = {
   type: "normal" | "long" | "wide" | "featured";
 };
 
-const TILE_DIMENSIONS: Record<
+const TILE_FLEX_CONFIG: Record<
   TileContainerProps["type"],
-  { width: number; height: number }
+  {
+    flexBasis: string;
+    aspectRatio: number;
+    minHeight?: number;
+    flexGrow?: number;
+  }
 > = {
-  normal: { width: NORMAL_TILE_WIDTH, height: NORMAL_TILE_HEIGHT },
-  long: { width: NORMAL_TILE_WIDTH, height: NORMAL_TILE_HEIGHT * 2 },
-  wide: { width: SCREEN_WIDTH - 2, height: NORMAL_TILE_HEIGHT },
-  featured: { width: SCREEN_WIDTH - 2, height: NORMAL_TILE_HEIGHT * 2 },
+  // Takes ~50% of container width, square aspect ratio
+  normal: {
+    flexBasis: "48%",
+    aspectRatio: 1,
+    minHeight: 120,
+  },
+  // Takes ~50% of container width, 2:1 aspect ratio (taller)
+  long: {
+    flexBasis: "48%",
+    aspectRatio: 0.5,
+    minHeight: 240,
+  },
+  // Takes full width, square aspect ratio
+  wide: {
+    flexBasis: "100%",
+    aspectRatio: 3,
+    minHeight: 120,
+    flexGrow: 1,
+  },
+  // Takes full width, 2:1 aspect ratio (taller)
+  featured: {
+    flexBasis: "100%",
+    aspectRatio: 1.5,
+    minHeight: 200,
+    flexGrow: 1,
+  },
 };
 
-export const TileContainer = styled(Pressable)<TileContainerProps>`
+const TILE_CONFIG = {
+  normal: {
+    height: `${NORMAL_HEIGHT}px`,
+    width: `${NORMAL_WIDTH}px`,
+  },
+  long: {
+    height: `${2*NORMAL_HEIGHT}px`,
+    width: `${NORMAL_WIDTH}px`,
+  },
+  wide: {
+    height: `${NORMAL_WIDTH}px`,
+    width: `${2*NORMAL_HEIGHT}px`,
+  },
+  featured: {
+    height: `${2*NORMAL_HEIGHT}px`,
+    width: `${2*NORMAL_WIDTH}px`,
+  },
+};
+
+export const TileContainer1 = styled(Pressable)<TileContainerProps>`
   ${({ type }) => {
-    const { width, height } = TILE_DIMENSIONS[type];
+    const config = TILE_FLEX_CONFIG[type];
     return css`
-      width: ${width}px;
-      height: ${height}px;
+      flex-basis: ${config.flexBasis};
+      aspect-ratio: ${config.aspectRatio};
+      min-height: ${config.minHeight}px;
+      ${config.flexGrow ? `flex-grow: ${config.flexGrow};` : ""}
+      flex-shrink: 0;
     `;
   }}
-
-  margin: 2px;
+  margin: 4px;
   border-width: 2px;
   overflow: hidden;
 `;
 
-// export const TileContainer = styled(Pressable)<TileContainerProps>`
-  
-//   width: 50%;
-//   margin: 2px;
-//   height:200px;
-//   border-width: 2px;
-// `;
+export const TileContainer = styled(Pressable)<TileContainerProps>`
+  ${({ type }) => {
+    const config = TILE_CONFIG[type];
+    return css`
+      width: ${config.width};
+      height: ${config.height};
+    `;
+  }}
+  border-width: 1px;
+`;

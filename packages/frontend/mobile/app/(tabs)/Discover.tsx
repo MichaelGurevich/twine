@@ -12,16 +12,22 @@ import { TileLayout } from "@/layouts/TileLayout";
 const mockTiles = [
   { data: [1, 2, 3, 4] },
   { data: [1, 2, 3] },
-  { data: [1, 2] },
+  { data: [1, 2, 3] },
+  { data: [1, 2, 3, 4] },
+  { data: [1, 2, 3, 4] },  
   { data: [1] },
   { data: [1, 2, 3] },
+  { data: [1, 2, 3] },
+  { data: [1, 2] },
+  { data: [1, 2, 3] },
+  { data: [1] },
   { data: [1, 2] },
   { data: [1, 2, 3, 4] },
-  { data: [1] },
-   { data: [1, 2, 3, 4] },
-  { data: [1, 2, 3] },
   { data: [1, 2] },
-  { data: [1] },
+  { data: [1, 2] },
+  { data: [1, 2] },
+   
+
 ];
 
 const Discover = () => {

@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { Tile, TileProps } from "@/components/Tile"; // Adjust the import path as necessary
 import styled from "styled-components/native";
 
+
 type ChunkType =
   | "featured"
   | "wide-stacked"
@@ -29,6 +30,7 @@ const STYLES: Style = {
   4: ["four-normal"],
 };
 
+
 const Row = styled(View)`
   flex-direction: row;
 `;
@@ -48,9 +50,6 @@ const getChuckType = (itemsCount: number) => {
 };
 
 export const TilesChunk = ( { data }:TilesChunkProps) => {
-  if (!data || data.length === 0) {
-    return <View />;
-  }
   const chunkType = getChuckType(data.length);
   
 
@@ -66,7 +65,7 @@ export const TilesChunk = ( { data }:TilesChunkProps) => {
       return (
         <Row>
           <Tile type="long" />
-          <Col style={{ flex: 1 }}>
+          <Col>
             <Tile type="normal" />
             <Tile type="normal" />
           </Col>
@@ -75,7 +74,7 @@ export const TilesChunk = ( { data }:TilesChunkProps) => {
     case "long-right-plus-2":
       return (
         <Row>
-          <Col style={{ flex: 1 }}>
+          <Col>
             <Tile type="normal" />
             <Tile type="normal" />
           </Col>
@@ -86,7 +85,7 @@ export const TilesChunk = ( { data }:TilesChunkProps) => {
       return (
         <Col>
           <Tile type="wide" />
-          <Row style={{ flex: 1 }}>
+          <Row>
             <Tile type="normal" />
             <Tile type="normal" />
           </Row>
@@ -95,7 +94,7 @@ export const TilesChunk = ( { data }:TilesChunkProps) => {
     case "wide-bottom-plus-2":
       return (
         <Col>
-          <Row style={{ flex: 1 }}>
+          <Row>
             <Tile type="normal" />
             <Tile type="normal" />
           </Row>
@@ -112,7 +111,7 @@ export const TilesChunk = ( { data }:TilesChunkProps) => {
     case "four-normal":
       return (
         <Col>
-          <Row>
+          <Row >
             <Tile type="normal" />
             <Tile type="normal" />
           </Row>
