@@ -1,63 +1,46 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, ListRenderItem } from "react-native";
 import { Tile, TileProps } from "@/components/Tile";
-import { TilesChunk, TilesChunkProps } from "./components/TilesChunk";
 
-
-
-export function createMockTiles(): { data: number[] }[] {
-  const makeRandomLengthArray = (chunkIndex: number) => {
-    const len = Math.floor(Math.random() * 4) + 1;   // 1 – 4
-    // Use the chunkIndex to keep the numbers easy to trace in logs:
-    return Array.from({ length: len }, (_, i) => i + 1 + chunkIndex * 100);
-  };
-
-  return [0, 1, 2].map(chunkIdx => ({ data: makeRandomLengthArray(chunkIdx) }));
+export function createMockTiles(): number[] {
+  const batchSize = 20;
+  const startId = Math.floor(Math.random() * 1000);
+  return Array.from({ length: batchSize }, (_, i) => startId + i);
 }
 
-
 export type TileLayoutProps = {
-  data: TilesChunkProps[];
+  data?: number[];
   onEndReached?: () => void;
-  renderItem?: ListRenderItem<TilesChunkProps>;
+  renderItem?: ListRenderItem<number>;
 };
-
-
 
 export const TileLayout = ({
   data,
-  onEndReached,
-  renderItem = ({ item }) => <TilesChunk {...item} />,
+  renderItem = ({ item }) => <Tile type="normal" />,
 }: TileLayoutProps) => {
-
-
-const [chunks, setChunks] = useState<TilesChunkProps[]>([]);
+  const [tiles, setTiles] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
 
-  /* fetch 3 chunks, append to state */
   const fetchMore = useCallback(() => {
-    if (loading) return;                    // debounce
+    if (loading) return;
     setLoading(true);
 
-    //  synchronous mock; replace with await api.fetch() for real calls
-    const newChunks = createMockTiles();
-    setChunks(prev => [...prev, ...newChunks]);
+    const newTiles = createMockTiles();
+    setTiles(prev => [...prev, ...newTiles]);
 
     setLoading(false);
   }, [loading]);
 
-  /* initial load */
   useEffect(() => {
     fetchMore();
   }, [fetchMore]);
 
-
   return (
     <FlatList
-      data={chunks}
+      data={tiles}
       renderItem={renderItem}
-      keyExtractor={(_, index) => index.toString()}
-      numColumns={1}
+      keyExtractor={(item) => item.toString()}
+      numColumns={2}
       onEndReached={fetchMore}
       onEndReachedThreshold={0.9}
     />
