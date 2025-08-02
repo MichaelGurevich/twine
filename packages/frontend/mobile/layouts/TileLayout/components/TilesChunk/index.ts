@@ -1,1 +1,1 @@
-export * from "./TilesChuck";
+export * from "./TilesChunk";
