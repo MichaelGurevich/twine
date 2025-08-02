@@ -1,17 +1,18 @@
 import React from "react";
 import { FlatList, ListRenderItem } from "react-native";
 import { Tile, TileProps } from "@/components/Tile";
+import { TilesChunk, TilesChunkProps } from "./components/TilesChunk";
 
 export type TileLayoutProps = {
-  data: TileProps[];
+  data: TilesChunkProps[];
   onEndReached?: () => void;
-  renderItem?: ListRenderItem<TileProps>;
+  renderItem?: ListRenderItem<TilesChunkProps>;
 };
 
 export const TileLayout = ({
   data,
   onEndReached,
-  renderItem = ({ item }) => <Tile {...item} />,
+  renderItem = ({ item }) => <TilesChunk {...item} />,
 }: TileLayoutProps) => {
   return (
     <FlatList

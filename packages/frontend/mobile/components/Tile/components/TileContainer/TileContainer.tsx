@@ -22,24 +22,24 @@ const TILE_DIMENSIONS: Record<
   featured: { width: SCREEN_WIDTH - 2, height: NORMAL_TILE_HEIGHT * 2 },
 };
 
-// export const TileContainer = styled(Pressable)<TileContainerProps>`
-//   ${({ type }) => {
-//     const { width, height } = TILE_DIMENSIONS[type];
-//     return css`
-//       width: ${width}px;
-//       height: ${height}px;
-//     `;
-//   }}
-
-//   margin: 2px;
-//   border-width: 2px;
-//   overflow: hidden;
-// `;
-
 export const TileContainer = styled(Pressable)<TileContainerProps>`
-  
-  width: 50%;
+  ${({ type }) => {
+    const { width, height } = TILE_DIMENSIONS[type];
+    return css`
+      width: ${width}px;
+      height: ${height}px;
+    `;
+  }}
+
   margin: 2px;
-  height:200px;
   border-width: 2px;
+  overflow: hidden;
 `;
+
+// export const TileContainer = styled(Pressable)<TileContainerProps>`
+  
+//   width: 50%;
+//   margin: 2px;
+//   height:200px;
+//   border-width: 2px;
+// `;
