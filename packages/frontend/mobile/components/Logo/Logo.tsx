@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 export const DEFAULT_LOGO_SIZE = 80;
 
 export type LogoProps = {
-  size?: number;
+  logoSize?: number;
 } & Pick<ImageProps, "source" | "accessibilityLabel">;
 
 const LogoWrapper = styled.View<{ size: number }>`
@@ -35,8 +35,8 @@ const LogoImage = styled.Image.attrs({
   height: 100%;
 `;
 
-export const Logo = ({ size = DEFAULT_LOGO_SIZE, ...rest }: LogoProps) => (
-  <LogoWrapper size={size}>
+export const Logo = ({ logoSize = DEFAULT_LOGO_SIZE, ...rest }: LogoProps) => (
+  <LogoWrapper size={logoSize}>
     <LogoImage {...rest} />
   </LogoWrapper>
 );
