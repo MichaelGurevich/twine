@@ -4,7 +4,7 @@ import { Pressable, Dimensions } from "react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const NORMAL_WIDTH = SCREEN_WIDTH / 2;
-const NORMAL_HEIGHT = NORMAL_WIDTH;
+export const NORMAL_TILE_HEIGHT = NORMAL_WIDTH;
 
 export type TileContainerProps = {
   type: "normal";
@@ -12,7 +12,7 @@ export type TileContainerProps = {
 
 const TILE_CONFIG = {
   normal: {
-    height: `${NORMAL_HEIGHT}px`,
+    height: `${NORMAL_TILE_HEIGHT}px`,
     width: `${NORMAL_WIDTH}px`,
   },
 };

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FlatList, ActivityIndicator } from "react-native";
 import { Tile, TileProps } from "@/components/Tile";
+import { NORMAL_TILE_HEIGHT } from "@/components/Tile/components/TileContainer";
 
 // API endpoint placeholder - replace with actual endpoint
 const DEFAULT_ENDPOINT = "SOMETHINGS"; // TODO: Replace with actual API endpoint
@@ -11,21 +12,21 @@ const ON_END_REACHED_THRESHOLD = 0.1;
 
 // Type definition for pagination data returned by API
 type ResponsePagesData = {
-  page: number;           // Current page number
-  total_pages: number;    // Total number of pages available
+  page: number; // Current page number
+  total_pages: number; // Total number of pages available
 };
 
 export const TileLayout = () => {
   // State to store the array of tile data
   const [tilesData, setTilesData] = useState<TileProps[]>([]);
-  
+
   // Loading state to prevent multiple simultaneous API calls
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // State to track current page and total pages for pagination
   const [pagesData, setPagesData] = useState<ResponsePagesData>({
-    page: 0,           // Start with page 0, will be updated after first API call
-    total_pages: 0,    // Total pages unknown initially
+    page: 0,
+    total_pages: 0,
   });
 
   /**
@@ -35,19 +36,19 @@ export const TileLayout = () => {
   const fetchTilesData = async (api_endpoint: string) => {
     // Prevent multiple simultaneous API calls
     if (isLoading) return;
-    
+
     // Set loading state to true
     setIsLoading(true);
 
     try {
       // Make API request
       const response = await fetch(api_endpoint);
-      
+
       // Check if HTTP request was successful
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       // Parse JSON response
       const data = await response.json();
 
@@ -62,15 +63,12 @@ export const TileLayout = () => {
         if (data.page === 1) {
           return data.jobs || []; // Replace with new data, fallback to empty array
         }
-        // Append new jobs to existing tiles data
         return [...prevTilesData, ...(data.jobs || [])];
       });
     } catch (error) {
-      // Log error to console for debugging
       console.error("Error fetching tiles data:", error);
       // TODO: Consider adding user-facing error handling here (toast, error state, retry button)
     } finally {
-      // Always set loading to false when done (success or error)
       setIsLoading(false);
     }
   };
@@ -82,10 +80,10 @@ export const TileLayout = () => {
   const loadNextPage = () => {
     // Calculate next page number
     const nextPage = pagesData.page + 1;
-    
+
     // Don't fetch if we've reached the last page or if already loading
     if (nextPage > pagesData.total_pages || isLoading) return;
-    
+
     // Fetch next page with page parameter
     fetchTilesData(`${DEFAULT_ENDPOINT}?page=${nextPage}`);
   };
@@ -98,26 +96,32 @@ export const TileLayout = () => {
 
   // TODO: Consider adding pull-to-refresh functionality
   // TODO: Add loading state for initial load vs pagination loading
+
+  const renderItem = useCallback(
+    ({ item }: { item: TileProps }) => <Tile {...item} />,
+    []
+  );
+
+ const keyExtractor = useCallback(
+  (item: TileProps, index: number) =>
+    item.id?.toString() || index.toString(),
+  []
+);
+
   return (
     <FlatList
-      // Data array to render
       data={tilesData}
-      
-      // Function to render each item - spreads item props to Tile component
-      renderItem={({ item }) => <Tile {...item} />}
-      
-      // Key extractor for performance - uses item.id or falls back to index
-      keyExtractor={(item, index) => item.id?.toString() || index.toString()}
-      
-      // Function called when user scrolls near bottom
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
       onEndReached={loadNextPage}
-      
-      // How close to end before triggering onEndReached (0.1 = 10% from bottom)
       onEndReachedThreshold={ON_END_REACHED_THRESHOLD}
-      
-      // Footer component - shows loading spinner when fetching more data
       // TODO: Consider adding empty state, error state, or "no more data" indicator
-      ListFooterComponent={() => isLoading ? <ActivityIndicator /> : null}
+      ListFooterComponent={() => (isLoading ? <ActivityIndicator /> : null)}
+      getItemLayout={(data, index) => ({
+        length: NORMAL_TILE_HEIGHT,
+        offset: NORMAL_TILE_HEIGHT * index,
+        index,
+      })}
     />
   );
 };
