@@ -9,6 +9,8 @@ const DEFAULT_ENDPOINT = "SOMETHINGS"; // TODO: Replace with actual API endpoint
 // Threshold for triggering pagination when user scrolls near bottom
 // 0.1 means trigger when user is 10% away from the bottom
 const ON_END_REACHED_THRESHOLD = 0.1;
+const NUM_COLUMNS = 2;
+export const GAP = 4; // Gap between tiles, if needed
 
 // Type definition for pagination data returned by API
 type ResponsePagesData = {
@@ -117,6 +119,9 @@ export const TileLayout = () => {
       onEndReachedThreshold={ON_END_REACHED_THRESHOLD}
       // TODO: Consider adding empty state, error state, or "no more data" indicator
       ListFooterComponent={() => (isLoading ? <ActivityIndicator /> : null)}
+      numColumns={NUM_COLUMNS}
+      contentContainerStyle={{gap: GAP}} // gap between lines
+      columnWrapperStyle={{gap: GAP}} // gap between columns
       getItemLayout={(data, index) => ({
         length: NORMAL_TILE_HEIGHT,
         offset: NORMAL_TILE_HEIGHT * index,

@@ -1,9 +1,10 @@
 import React from "react";
 import styled, { css } from "styled-components/native";
 import { Pressable, Dimensions } from "react-native";
+import {GAP} from "@/layouts/TileLayout";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const NORMAL_WIDTH = SCREEN_WIDTH / 2;
+const NORMAL_WIDTH = SCREEN_WIDTH * 0.5 - GAP / 2;
 export const NORMAL_TILE_HEIGHT = NORMAL_WIDTH;
 
 export type TileContainerProps = {
