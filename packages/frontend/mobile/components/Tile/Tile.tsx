@@ -111,17 +111,6 @@ const buildMetadataString = (
   if (experienceLevel) metadata.push(capitalizeFirst(experienceLevel));
   
   return metadata.join(" | ");
-
-  id:string;
-  image?: string;
-  alt?: string;
-  title: string;
-  description?: string;
-} & TileContainerProps;
-
-export const Tile = ({ type }: TileProps) => {
-  return <TileContainer type={type} />;
-
 };
 
 export const Tile = ({
