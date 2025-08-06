@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, { SourceHTMLAttributes, useMemo } from "react";
 import { TileContainer, TileContainerProps } from "./components/TileContainer";
 import styled from "styled-components/native";
 import { Logo, LogoProps } from "@/components/Logo";
+import { Text } from "react-native";
 import { Chip } from "@/components/Chip";
 
 export type TileProps = {
@@ -20,29 +21,19 @@ export type TileProps = {
   skills_required?: string[];
   userSkills?: string[];
   maxSkillsToShow?: number; // New prop with default value
-} & TileContainerProps &
-  LogoProps;
+} & TileContainerProps & Pick<LogoProps, "source" | "accessibilityLabel">
+
+const COMPANY_LOGO_SIZE = 60; // Default logo size
 
 const TileDescriptionSection = styled.View`
   flex: 1;
   width: 100%;
-  align-items: flex-start;
-`;
-
-const HeaderSection = styled.View`
-  width: 100%;
-  flex-direction: row;
-  align-items: flex-start;
-  margin-bottom: 12px;
-`;
-
-const LogoSection = styled.View`
   align-items: center;
-  margin-left: 12px;
 `;
 
-const JobInfo = styled.View`
-  flex: 1;
+const CompanySection = styled.View`
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
 `;
 
@@ -50,51 +41,68 @@ const CompanyName = styled.Text`
   font-weight: 400;
   font-size: 12px;
   color: #6b7280;
-  text-align: center;
-  margin-bottom: 8px;
   font-family: system;
 `;
 
+const JobInfoSection = styled.View`
+  width: 100%;
+  align-items: center;
+  margin-bottom: 12px;
+`;
+
 const JobTitle = styled.Text`
+  flex: 1;
   font-weight: 500;
   font-size: 15px;
   color: #374151;
   line-height: 20px;
-  margin-bottom: 4px;
+  text-align: center;
 `;
 
 const MetadataText = styled.Text`
+
   font-size: 12px;
   color: #6b7280;
   font-weight: 400;
   line-height: 16px;
+  text-align: center;
+  
 `;
 
 const SkillsSection = styled.View`
   width: 100%;
-  margin-top: 12px;
+  margin-top: 4px;
   margin-bottom: 8px;
+  padding-horizontal: 8px;
+`;
+
+const HeaderContainer = styled.View`
+  width: 100%;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const SkillsContainer = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   gap: 6px;
+  justify-content: center;
 `;
 
 // Constants
 const DEFAULT_MAX_SKILLS_TO_SHOW = 4;
 
 // Helper functions
-const capitalizeFirst = (str: string): string => 
+const capitalizeFirst = (str: string): string =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
-const formatEmploymentType = (type: string): string => 
+const formatEmploymentType = (type: string): string =>
   capitalizeFirst(type.replace("_", " "));
 
 const isSkillMatched = (skill: string, userSkills: string[]): boolean =>
-  userSkills.some(userSkill => 
-    userSkill.toLowerCase().trim() === skill.toLowerCase().trim()
+  userSkills.some(
+    (userSkill) => userSkill.toLowerCase().trim() === skill.toLowerCase().trim()
   );
 
 const buildMetadataString = (
@@ -104,12 +112,12 @@ const buildMetadataString = (
   experienceLevel?: string
 ): string => {
   const metadata: string[] = [];
-  
+
   if (location) metadata.push(location);
   if (jobType) metadata.push(capitalizeFirst(jobType));
   if (employmentType) metadata.push(formatEmploymentType(employmentType));
   if (experienceLevel) metadata.push(capitalizeFirst(experienceLevel));
-  
+
   return metadata.join(" | ");
 };
 
@@ -124,25 +132,25 @@ export const Tile = ({
   skills_required,
   userSkills = [],
   source,
-  logoSize = 50,
   maxSkillsToShow = DEFAULT_MAX_SKILLS_TO_SHOW,
-  //alt,
+
   ...containerProps
 }: TileProps) => {
   // Build metadata string
   const metadataString = useMemo(
-    () => buildMetadataString(location, jobType, employmentType, experienceLevel),
+    () =>
+      buildMetadataString(location, jobType, employmentType, experienceLevel),
     [location, jobType, employmentType, experienceLevel]
   );
 
   // Sort skills to prioritize matched ones first
   const sortedSkills = useMemo(() => {
     if (!skills_required) return [];
-    
+
     return [...skills_required].sort((a, b) => {
       const aMatched = isSkillMatched(a, userSkills);
       const bMatched = isSkillMatched(b, userSkills);
-      
+
       // Matched skills come first
       if (aMatched && !bMatched) return -1;
       if (!aMatched && bMatched) return 1;
@@ -156,57 +164,30 @@ export const Tile = ({
 
   return (
     <TileContainer {...containerProps}>
-      <TileDescriptionSection>
-        <>
-          {/* Header with Job Info and Logo */}
-          <HeaderSection>
-            <JobInfo>
-              <JobTitle numberOfLines={2}>{title}</JobTitle>
-              {/* Metadata Text right under job title */}
-              {metadataString && (
-                <MetadataText numberOfLines={2}>{metadataString}</MetadataText>
-              )}
-            </JobInfo>
-            <LogoSection>
-              {source && (
-                <Logo
-                  source={source}
-                  logoSize={logoSize}
-                  //alt={alt || `${companyName || title} logo`}
-                />
-              )}
-              {companyName && (
-                <CompanyName numberOfLines={1}>{companyName}</CompanyName>
-              )}
-            </LogoSection>
-          </HeaderSection>
-
-          {/* Skills Section */}
-          {sortedSkills.length > 0 && (
-            <SkillsSection>
-              <SkillsContainer>
-                {sortedSkills.slice(0, skillsToDisplay).map((skill, index) => {
-                  const isMatched = isSkillMatched(skill, userSkills);
-                  return (
-                    <Chip 
-                      key={`${id}-skill-${index}`} 
-                      name={skill}
-                      variant={isMatched ? 'matched' : 'skill'}
-                      size="small"
-                    />
-                  );
-                })}
-                {remainingSkillsCount > 0 && (
-                  <Chip 
-                    name={`+${remainingSkillsCount}`}
-                    variant="skill"
-                    size="small"
-                  />
-                )}
-              </SkillsContainer>
-            </SkillsSection>
+      <HeaderContainer>
+        <CompanySection>
+          {source && (
+            <Logo
+              source={source}
+              logoSize={COMPANY_LOGO_SIZE}
+            />
           )}
-        </>
+          {companyName && (
+            <CompanyName numberOfLines={1}>{companyName}</CompanyName>
+          )}
+        </CompanySection>
+        <JobTitle numberOfLines={2}>{title}</JobTitle>
+      </HeaderContainer>
+
+      <TileDescriptionSection>
+
+        {/* Job Title and Metadata - Centered Below Company */}
+        <JobInfoSection>
+          {metadataString && (
+            <MetadataText numberOfLines={2}>{metadataString}</MetadataText>
+          )}
+        </JobInfoSection>
+
       </TileDescriptionSection>
     </TileContainer>
   );

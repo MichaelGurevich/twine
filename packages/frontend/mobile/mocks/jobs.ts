@@ -1,419 +1,487 @@
-// Sample job listings data
-
-// Helper function to generate random job IDs
-const generateJobId = () =>
-  Math.floor(100000 + Math.random() * 900000).toString();
-
-// Helper function to generate random dates within last 3 months
-const generateRandomDate = () => {
-  const now = new Date();
-  const monthsAgo = new Date();
-  monthsAgo.setMonth(now.getMonth() - 3);
-
-  const randomTime =
-    monthsAgo.getTime() + Math.random() * (now.getTime() - monthsAgo.getTime());
-  const randomDate = new Date(randomTime);
-
-  return randomDate.toISOString().split("T")[0];
-};
-
-// Sample descriptions and qualifications
-const createDescription = (role, company, specialization = "") => {
-  return `
-    ${company} is seeking an experienced ${role}${
-    specialization ? ` specializing in ${specialization}` : ""
-  } to join our team. 
-    
-    As a ${role} at ${company}, you will be responsible for designing, developing, and maintaining high-quality solutions that meet business requirements and technical specifications. You'll collaborate with cross-functional teams to deliver innovative products and services that drive our business forward.
-    
-    Responsibilities:
-    • Design, develop, and implement robust solutions using industry best practices
-    • Collaborate with product managers, designers, and other stakeholders to understand requirements
-    • Write clean, efficient, and maintainable code
-    • Perform code reviews and provide constructive feedback to peers
-    • Troubleshoot and resolve technical issues in a timely manner
-    • Stay up-to-date with emerging trends and technologies
-    • Mentor junior team members and contribute to knowledge sharing
-    • Document technical specifications and architecture decisions
-    • Participate in agile ceremonies and continuous improvement initiatives
-    
-    Join our dynamic team and contribute to cutting-edge projects while growing your career at ${company}.
-  `;
-};
-
-const createQualification = (
-  yearsExperience,
-  primarySkill,
-  additionalSkills = []
-) => {
-  const additionalSkillsText =
-    additionalSkills.length > 0
-      ? `\n    • Experience with ${additionalSkills.join(", ")}`
-      : "";
-
-  return `
-    Qualifications:
-    • Bachelor's degree in Computer Science, Engineering, or related field
-    • ${yearsExperience}+ years of professional experience in software development
-    • Strong proficiency in ${primarySkill}
-    • Solid understanding of data structures, algorithms, and software design principles
-    • Experience with version control systems (Git)
-    • Excellent problem-solving and analytical skills${additionalSkillsText}
-    • Strong communication and teamwork skills
-    • Self-motivated with ability to work independently and in a team environment
-    • Passion for learning new technologies and continuous improvement
-  `;
-};
-
-// Sample skills by category
-const frontendSkills = [
-  "React",
-  "Angular",
-  "Vue.js",
-  "JavaScript",
-  "TypeScript",
-  "HTML5",
-  "CSS3",
-  "Redux",
-  "Webpack",
-  "SASS/LESS",
-  "UI/UX Design",
-  "Responsive Design",
-  "Jest",
-  "Cypress",
-];
-const backendSkills = [
-  "Node.js",
-  "Python",
-  "Java",
-  "C#",
-  ".NET",
-  "Ruby on Rails",
-  "PHP",
-  "Django",
-  "Express.js",
-  "Spring Boot",
-  "REST APIs",
-  "GraphQL",
-  "Microservices",
-  "SQL",
-  "NoSQL",
-];
-const devopsSkills = [
-  "Docker",
-  "Kubernetes",
-  "Jenkins",
-  "GitLab CI/CD",
-  "AWS",
-  "Azure",
-  "GCP",
-  "Terraform",
-  "Ansible",
-  "Prometheus",
-  "Grafana",
-  "Linux",
-  "Shell Scripting",
-  "Infrastructure as Code",
-];
-const dataSkills = [
-  "SQL",
-  "Python",
-  "R",
-  "Pandas",
-  "NumPy",
-  "Tableau",
-  "Power BI",
-  "Hadoop",
-  "Spark",
-  "ETL",
-  "Data Modeling",
-  "Data Warehousing",
-  "Machine Learning",
-  "Statistical Analysis",
-];
-const mobileSkills = [
-  "Swift",
-  "Kotlin",
-  "React Native",
-  "Flutter",
-  "iOS Development",
-  "Android Development",
-  "Mobile UI Design",
-  "App Store Optimization",
-  "Push Notifications",
-  "Mobile Security",
-  "Offline Storage",
-  "Mobile Testing",
-];
-const securitySkills = [
-  "Network Security",
-  "Penetration Testing",
-  "OWASP",
-  "Security Auditing",
-  "Encryption",
-  "Authentication",
-  "Authorization",
-  "Threat Modeling",
-  "Security Compliance",
-  "Vulnerability Assessment",
-];
-const designSkills = [
-  "Figma",
-  "Adobe XD",
-  "Sketch",
-  "Photoshop",
-  "Illustrator",
-  "UI Design",
-  "UX Research",
-  "Wireframing",
-  "Prototyping",
-  "User Testing",
-  "Information Architecture",
-  "Accessibility",
-  "Design Systems",
-];
-const pmSkills = [
-  "Agile",
-  "Scrum",
-  "Kanban",
-  "JIRA",
-  "Confluence",
-  "Product Roadmapping",
-  "Sprint Planning",
-  "User Stories",
-  "Stakeholder Management",
-  "Requirements Gathering",
-  "Market Research",
-  "Data Analysis",
-  "A/B Testing",
-];
-
-// Generate random skills based on role category
-const generateSkills = (category, count = 7) => {
-  let skillsPool;
-  switch (category) {
-    case "frontend":
-      skillsPool = frontendSkills;
-      break;
-    case "backend":
-      skillsPool = backendSkills;
-      break;
-    case "fullstack":
-      skillsPool = [...frontendSkills, ...backendSkills];
-      break;
-    case "devops":
-      skillsPool = devopsSkills;
-      break;
-    case "data":
-      skillsPool = dataSkills;
-      break;
-    case "mobile":
-      skillsPool = mobileSkills;
-      break;
-    case "security":
-      skillsPool = securitySkills;
-      break;
-    case "design":
-      skillsPool = designSkills;
-      break;
-    case "pm":
-      skillsPool = pmSkills;
-      break;
-    default:
-      skillsPool = [...frontendSkills, ...backendSkills];
-  }
-
-  // Shuffle and pick random skills
-  const shuffled = [...skillsPool].sort(() => 0.5 - Math.random());
-  // Return skills as objects with skill and matched properties
-  return shuffled.slice(0, count).map((skill) => ({
-    skill: skill,
-    matched: Math.random() > 0.5, // Randomly set some skills as matched
-  }));
-};
-
-// Companies data with their logo placeholder URLs
-const companies = [
-  { name: "Google", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Microsoft", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Amazon", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Apple", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Meta", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Netflix", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Spotify", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Twitter", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "LinkedIn", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Airbnb", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Uber", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  {
-    name: "Salesforce",
-    logo: "https://pngimg.com/uploads/meta/meta_PNG12.png",
-  },
-  { name: "Adobe", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "IBM", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Intel", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Oracle", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Cisco", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "PayPal", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Tesla", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Slack", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Stripe", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Twilio", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Dropbox", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Shopify", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-  { name: "Zoom", logo: "https://pngimg.com/uploads/meta/meta_PNG12.png" },
-];
-
-// Locations
-const locations = [
-  "San Francisco, CA",
-  "New York, NY",
-  "Seattle, WA",
-  "Austin, TX",
-  "Boston, MA",
-  "Chicago, IL",
-  "Los Angeles, CA",
-  "Atlanta, GA",
-  "Denver, CO",
-  "Portland, OR",
-  "Miami, FL",
-  "Washington, DC",
-  "Dallas, TX",
-  "Toronto, Canada",
-  "Vancouver, Canada",
-  "London, UK",
-  "Berlin, Germany",
-  "Paris, France",
-  "Amsterdam, Netherlands",
-  "Dublin, Ireland",
-  "Sydney, Australia",
-  "Melbourne, Australia",
-  "Singapore",
-  "Tokyo, Japan",
-  "Tel Aviv, Israel",
-  "Stockholm, Sweden",
-  "Zurich, Switzerland",
-  "Barcelona, Spain",
-  "Bangalore, India",
-  "Mexico City, Mexico",
-];
-
-// Job titles with their categories
-const jobTitles = [
-  { title: "Frontend Developer", category: "frontend" },
-  { title: "Senior Frontend Engineer", category: "frontend" },
-  { title: "UI Engineer", category: "frontend" },
-  { title: "React Developer", category: "frontend" },
-  { title: "Angular Developer", category: "frontend" },
-  { title: "Backend Developer", category: "backend" },
-  { title: "Senior Backend Engineer", category: "backend" },
-  { title: "Java Developer", category: "backend" },
-  { title: "Python Developer", category: "backend" },
-  { title: "Node.js Developer", category: "backend" },
-  { title: "Full Stack Developer", category: "fullstack" },
-  { title: "Full Stack Engineer", category: "fullstack" },
-  { title: "Software Engineer", category: "fullstack" },
-  { title: "Senior Software Engineer", category: "fullstack" },
-  { title: "Principal Engineer", category: "fullstack" },
-  { title: "DevOps Engineer", category: "devops" },
-  { title: "Site Reliability Engineer", category: "devops" },
-  { title: "Cloud Engineer", category: "devops" },
-  { title: "Infrastructure Engineer", category: "devops" },
-  { title: "Platform Engineer", category: "devops" },
-  { title: "Data Scientist", category: "data" },
-  { title: "Data Engineer", category: "data" },
-  { title: "Data Analyst", category: "data" },
-  { title: "Machine Learning Engineer", category: "data" },
-  { title: "Business Intelligence Analyst", category: "data" },
-  { title: "iOS Developer", category: "mobile" },
-  { title: "Android Developer", category: "mobile" },
-  { title: "Mobile App Developer", category: "mobile" },
-  { title: "React Native Developer", category: "mobile" },
-  { title: "Flutter Developer", category: "mobile" },
-  { title: "Security Engineer", category: "security" },
-  { title: "Security Analyst", category: "security" },
-  { title: "Information Security Specialist", category: "security" },
-  { title: "Penetration Tester", category: "security" },
-  { title: "Cybersecurity Consultant", category: "security" },
-  { title: "UX Designer", category: "design" },
-  { title: "UI Designer", category: "design" },
-  { title: "Product Designer", category: "design" },
-  { title: "Interaction Designer", category: "design" },
-  { title: "Visual Designer", category: "design" },
-  { title: "Product Manager", category: "pm" },
-  { title: "Technical Project Manager", category: "pm" },
-  { title: "Scrum Master", category: "pm" },
-  { title: "Agile Coach", category: "pm" },
-  { title: "Program Manager", category: "pm" },
-];
-
-// Work load options
-const workLoads = [
-  "Full Time",
-  "Part Time",
-  "Contract",
-  "Freelance",
-  "Internship",
-];
-
-// Work mode options
-const workModes = ["Remote", "Hybrid", "On-site"];
-
-// Generate jobs array
-const generateJobs = (count) => {
-  const jobs = [];
-
-  for (let i = 0; i < count; i++) {
-    // Randomly select job details
-    const jobTitle = jobTitles[Math.floor(Math.random() * jobTitles.length)];
-    const company = companies[Math.floor(Math.random() * companies.length)];
-    const location = locations[Math.floor(Math.random() * locations.length)];
-    const workLoad = workLoads[Math.floor(Math.random() * workLoads.length)];
-    const workMode = workModes[Math.floor(Math.random() * workModes.length)];
-
-    // Generate skills based on job category
-    const skillsCount = 5 + Math.floor(Math.random() * 5); // 5-9 skills
-    const skills = generateSkills(jobTitle.category, skillsCount);
-
-    // Generate years of experience based on if the job title contains "Senior" or "Principal"
-    let yearsExperience;
-    if (
-      jobTitle.title.includes("Principal") ||
-      jobTitle.title.includes("Lead")
-    ) {
-      yearsExperience = 8 + Math.floor(Math.random() * 5); // 8-12 years
-    } else if (jobTitle.title.includes("Senior")) {
-      yearsExperience = 5 + Math.floor(Math.random() * 4); // 5-8 years
-    } else {
-      yearsExperience = 2 + Math.floor(Math.random() * 4); // 2-5 years
-    }
-
-    // Create job object
-    const job = {
-      jobId: generateJobId(),
-      publishedDate: generateRandomDate(),
-      companyLogo: { uri: company.logo },
-      title: jobTitle.title,
-      companyName: company.name,
-      location: location,
-      workLoad: workLoad,
-      workMode: workMode,
-      jobText: {
-        description: createDescription(jobTitle.title, company.name),
-        qualification: createQualification(
-          yearsExperience,
-          skills[0],
-          skills.slice(1, 4)
-        ),
+export const mockJobsResponse = {
+  "status": "success",
+  "data": {
+    "jobs": [
+      {
+        "id": "job_001",
+        "title": "Senior React Developer",
+        "location": "San Francisco, CA",
+        "jobType": "hybrid",
+        "employmentType": "full_time",
+        "experienceLevel": "senior",
+        "companyName": "Meta",
+        "skills_required": ["React", "TypeScript", "Node.js", "GraphQL", "AWS"],
+        "userSkills": ["React", "TypeScript", "JavaScript"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/techflow.com",
+        "accessibilityLabel": "TechFlow Inc. company logo",
       },
-      skills: skills,
-    };
-
-    jobs.push(job);
-  }
-
-  return jobs;
-};
-
-//TODO change when needed
-export const JOBS = generateJobs(1);
+      {
+        "id": "job_002",
+        "title": "Product Designer",
+        "location": "New York, NY",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "Design Studio Pro",
+        "skills_required": ["Figma", "Sketch", "Prototyping", "User Research", "Design Systems"],
+        "userSkills": ["Figma", "Sketch", "Adobe XD"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/designstudiopro.com",
+        "accessibilityLabel": "Design Studio Pro company logo",
+        "logoSize": 52
+      },
+      {
+        "id": "job_003",
+        "title": "DevOps Engineer",
+        "jobType": "remote",
+        "employmentType": "contract",
+        "experienceLevel": "senior",
+        "companyName": "CloudTech Solutions",
+        "skills_required": ["Docker", "Kubernetes", "Jenkins", "AWS", "Terraform", "Python"],
+        "userSkills": ["Docker", "AWS", "Python"],
+        "maxSkillsToShow": 2,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/cloudtech.com",
+        "accessibilityLabel": "CloudTech Solutions company logo",
+        "logoSize": 44
+      },
+      {
+        "id": "job_004",
+        "title": "Frontend Developer Intern",
+        "location": "Austin, TX",
+        "jobType": "hybrid",
+        "employmentType": "internship",
+        "experienceLevel": "entry",
+        "companyName": "StartupLab",
+        "skills_required": ["HTML", "CSS", "JavaScript", "React", "Git"],
+        "userSkills": ["HTML", "CSS", "JavaScript", "React"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/startuplab.com",
+        "accessibilityLabel": "StartupLab company logo",
+        "logoSize": 40
+      },
+      {
+        "id": "job_005",
+        "title": "Data Scientist",
+        "location": "Seattle, WA",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "DataMinds Corp",
+        "skills_required": ["Python", "Machine Learning", "SQL", "TensorFlow", "Pandas", "R"],
+        "userSkills": ["Python", "SQL", "Pandas"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/dataminds.com",
+        "accessibilityLabel": "DataMinds Corp company logo",
+        "logoSize": 50
+      },
+      {
+        "id": "job_006",
+        "title": "Mobile App Developer",
+        "jobType": "remote",
+        "employmentType": "part_time",
+        "experienceLevel": "junior",
+        "companyName": "AppCrafters",
+        "skills_required": ["React Native", "Swift", "Kotlin", "Firebase", "Redux"],
+        "userSkills": ["React Native", "JavaScript"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/appcrafters.com",
+        "accessibilityLabel": "AppCrafters company logo",
+        "logoSize": 46
+      },
+      {
+        "id": "job_007",
+        "title": "Engineering Director",
+        "location": "Boston, MA",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "director",
+        "companyName": "Innovation Labs",
+        "skills_required": ["Leadership", "Architecture", "Scalability", "Team Management", "Strategy"],
+        "userSkills": ["Leadership", "Team Management"],
+        "maxSkillsToShow": 5,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/innovationlabs.com",
+        "accessibilityLabel": "Innovation Labs company logo",
+        "logoSize": 54
+      },
+      {
+        "id": "job_008",
+        "title": "Cybersecurity Analyst",
+        "location": "Chicago, IL",
+        "jobType": "hybrid",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "SecureNet Systems",
+        "skills_required": ["Network Security", "Penetration Testing", "SIEM", "Incident Response", "Python"],
+        "userSkills": ["Network Security", "Python"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/securenet.com",
+        "accessibilityLabel": "SecureNet Systems company logo",
+        "logoSize": 48
+      },
+      {
+        "id": "job_009",
+        "title": "Quality Assurance Engineer",
+        "location": "Denver, CO",
+        "jobType": "remote",
+        "employmentType": "temporary",
+        "experienceLevel": "junior",
+        "companyName": "TestPro Solutions",
+        "skills_required": ["Manual Testing", "Automation Testing", "Selenium", "API Testing", "Bug Tracking"],
+        "userSkills": ["Manual Testing", "Selenium"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/testpro.com",
+        "accessibilityLabel": "TestPro Solutions company logo",
+        "logoSize": 42
+      },
+      {
+        "id": "job_010",
+        "title": "Full Stack Developer",
+        "location": "Miami, FL",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "senior",
+        "companyName": "WebWorks Studio",
+        "skills_required": ["React", "Node.js", "MongoDB", "Express", "Docker", "Git"],
+        "userSkills": ["React", "Node.js", "MongoDB", "Express"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/webworks.com",
+        "accessibilityLabel": "WebWorks Studio company logo",
+        "logoSize": 50
+      },
+      {
+        "id": "job_011",
+        "title": "AI/ML Engineer",
+        "jobType": "remote",
+        "employmentType": "contract",
+        "experienceLevel": "lead",
+        "companyName": "Neural Networks Inc",
+        "skills_required": ["PyTorch", "TensorFlow", "Deep Learning", "NLP", "Computer Vision", "MLOps"],
+        "userSkills": ["PyTorch", "Deep Learning"],
+        "maxSkillsToShow": 5,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/neuralnetworks.com",
+        "accessibilityLabel": "Neural Networks Inc company logo",
+        "logoSize": 52
+      },
+      {
+        "id": "job_012",
+        "title": "Backend Developer",
+        "location": "Portland, OR",
+        "jobType": "hybrid",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "ServerSide Tech",
+        "skills_required": ["Java", "Spring Boot", "PostgreSQL", "Redis", "Microservices"],
+        "userSkills": ["Java", "Spring Boot", "PostgreSQL"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/serverside.com",
+        "accessibilityLabel": "ServerSide Tech company logo",
+        "logoSize": 46
+      },
+      {
+        "id": "job_013",
+        "title": "UX Researcher",
+        "location": "Los Angeles, CA",
+        "jobType": "onsite",
+        "employmentType": "part_time",
+        "experienceLevel": "junior",
+        "companyName": "User Experience Co",
+        "skills_required": ["User Research", "Usability Testing", "Survey Design", "Data Analysis", "Wireframing"],
+        "userSkills": ["User Research", "Data Analysis"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/userexperience.com",
+        "accessibilityLabel": "User Experience Co company logo",
+        "logoSize": 44
+      },
+      {
+        "id": "job_014",
+        "title": "Cloud Architect",
+        "location": "Dallas, TX",
+        "jobType": "remote",
+        "employmentType": "full_time",
+        "experienceLevel": "senior",
+        "companyName": "CloudFirst Solutions",
+        "skills_required": ["AWS", "Azure", "GCP", "Serverless", "Infrastructure as Code", "Solution Architecture"],
+        "userSkills": ["AWS", "Azure"],
+        "maxSkillsToShow": 5,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/cloudfirst.com",
+        "accessibilityLabel": "CloudFirst Solutions company logo",
+        "logoSize": 50
+      },
+      {
+        "id": "job_015",
+        "title": "Game Developer",
+        "location": "San Diego, CA",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "GameStudio Plus",
+        "skills_required": ["Unity", "C#", "3D Modeling", "Game Physics", "Multiplayer Networking"],
+        "userSkills": ["Unity", "C#"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/gamestudio.com",
+        "accessibilityLabel": "GameStudio Plus company logo",
+        "logoSize": 48
+      },
+      {
+        "id": "job_016",
+        "title": "Blockchain Developer",
+        "location": "Phoenix, AZ",
+        "jobType": "remote",
+        "employmentType": "contract",
+        "experienceLevel": "senior",
+        "companyName": "CryptoTech Labs",
+        "skills_required": ["Solidity", "Web3", "Ethereum", "Smart Contracts", "DeFi", "JavaScript"],
+        "userSkills": ["JavaScript", "Solidity", "Web3"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/cryptotech.com",
+        "accessibilityLabel": "CryptoTech Labs company logo",
+        "logoSize": 46
+      },
+      {
+        "id": "job_017",
+        "title": "Site Reliability Engineer",
+        "location": "Nashville, TN",
+        "jobType": "hybrid",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "Reliable Systems Inc",
+        "skills_required": ["Monitoring", "Incident Management", "Automation", "Linux", "Prometheus", "Grafana"],
+        "userSkills": ["Linux", "Monitoring", "Automation"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/reliablesystems.com",
+        "accessibilityLabel": "Reliable Systems Inc company logo",
+        "logoSize": 48
+      },
+      {
+        "id": "job_018",
+        "title": "Technical Writer",
+        "jobType": "remote",
+        "employmentType": "part_time",
+        "experienceLevel": "junior",
+        "companyName": "DocuMaster Solutions",
+        "skills_required": ["Technical Writing", "API Documentation", "Markdown", "Git", "Content Strategy"],
+        "userSkills": ["Technical Writing", "Markdown", "Git"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/documaster.com",
+        "accessibilityLabel": "DocuMaster Solutions company logo",
+        "logoSize": 44
+      },
+      {
+        "id": "job_019",
+        "title": "Database Administrator",
+        "location": "Tampa, FL",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "senior",
+        "companyName": "DataVault Corp",
+        "skills_required": ["MySQL", "PostgreSQL", "Database Design", "Performance Tuning", "Backup & Recovery", "SQL"],
+        "userSkills": ["SQL", "MySQL", "PostgreSQL"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/datavault.com",
+        "accessibilityLabel": "DataVault Corp company logo",
+        "logoSize": 50
+      },
+      {
+        "id": "job_020",
+        "title": "iOS Developer",
+        "location": "Raleigh, NC",
+        "jobType": "hybrid",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "Mobile Innovations",
+        "skills_required": ["Swift", "UIKit", "SwiftUI", "Core Data", "App Store Optimization"],
+        "userSkills": ["Swift", "UIKit", "Core Data"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/mobileinnovations.com",
+        "accessibilityLabel": "Mobile Innovations company logo",
+        "logoSize": 46
+      },
+      {
+        "id": "job_021",
+        "title": "Security Engineer",
+        "jobType": "remote",
+        "employmentType": "contract",
+        "experienceLevel": "senior",
+        "companyName": "CyberShield Technologies",
+        "skills_required": ["Vulnerability Assessment", "Security Auditing", "Compliance", "Risk Management", "Cryptography"],
+        "userSkills": ["Security Auditing", "Risk Management"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/cybershield.com",
+        "accessibilityLabel": "CyberShield Technologies company logo",
+        "logoSize": 48
+      },
+      {
+        "id": "job_022",
+        "title": "Product Manager",
+        "location": "Salt Lake City, UT",
+        "jobType": "hybrid",
+        "employmentType": "full_time",
+        "experienceLevel": "senior",
+        "companyName": "ProductFirst Inc",
+        "skills_required": ["Product Strategy", "Roadmap Planning", "Agile", "User Stories", "Market Research", "Analytics"],
+        "userSkills": ["Product Strategy", "Agile", "Analytics"],
+        "maxSkillsToShow": 5,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/productfirst.com",
+        "accessibilityLabel": "ProductFirst Inc company logo",
+        "logoSize": 52
+      },
+      {
+        "id": "job_023",
+        "title": "Data Engineer",
+        "location": "Minneapolis, MN",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "DataPipeline Solutions",
+        "skills_required": ["Apache Spark", "Kafka", "Airflow", "Python", "SQL", "Data Warehousing"],
+        "userSkills": ["Python", "SQL", "Apache Spark"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/datapipeline.com",
+        "accessibilityLabel": "DataPipeline Solutions company logo",
+        "logoSize": 48
+      },
+      {
+        "id": "job_024",
+        "title": "Scrum Master",
+        "jobType": "remote",
+        "employmentType": "temporary",
+        "experienceLevel": "mid",
+        "companyName": "Agile Consultants LLC",
+        "skills_required": ["Scrum", "Agile Coaching", "Facilitation", "Team Leadership", "Jira", "Confluence"],
+        "userSkills": ["Scrum", "Agile Coaching", "Jira"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/agileconsultants.com",
+        "accessibilityLabel": "Agile Consultants LLC company logo",
+        "logoSize": 44
+      },
+      {
+        "id": "job_025",
+        "title": "Solutions Architect",
+        "location": "Charlotte, NC",
+        "jobType": "hybrid",
+        "employmentType": "full_time",
+        "experienceLevel": "lead",
+        "companyName": "Enterprise Solutions Group",
+        "skills_required": ["System Design", "Enterprise Architecture", "Microservices", "API Design", "Technology Strategy"],
+        "userSkills": ["System Design", "API Design", "Microservices"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/enterprisesolutions.com",
+        "accessibilityLabel": "Enterprise Solutions Group company logo",
+        "logoSize": 50
+      },
+      {
+        "id": "job_026",
+        "title": "Junior Software Developer",
+        "location": "Kansas City, MO",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "entry",
+        "companyName": "CodeStart Academy",
+        "skills_required": ["JavaScript", "HTML", "CSS", "Git", "Basic Programming Concepts"],
+        "userSkills": ["JavaScript", "HTML", "CSS", "Git"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/codestart.com",
+        "accessibilityLabel": "CodeStart Academy company logo",
+        "logoSize": 42
+      },
+      {
+        "id": "job_027",
+        "title": "DevSecOps Engineer",
+        "jobType": "remote",
+        "employmentType": "contract",
+        "experienceLevel": "senior",
+        "companyName": "SecureDevOps Co",
+        "skills_required": ["Security Integration", "CI/CD Pipelines", "Container Security", "SAST", "DAST", "Infrastructure Security"],
+        "userSkills": ["CI/CD Pipelines", "Container Security"],
+        "maxSkillsToShow": 5,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/securedevops.com",
+        "accessibilityLabel": "SecureDevOps Co company logo",
+        "logoSize": 48
+      },
+      {
+        "id": "job_028",
+        "title": "Business Intelligence Analyst",
+        "location": "Indianapolis, IN",
+        "jobType": "hybrid",
+        "employmentType": "full_time",
+        "experienceLevel": "mid",
+        "companyName": "BI Insights Corp",
+        "skills_required": ["Power BI", "Tableau", "SQL", "Data Visualization", "Excel", "Business Analysis"],
+        "userSkills": ["SQL", "Power BI", "Excel"],
+        "maxSkillsToShow": 4,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/biinsights.com",
+        "accessibilityLabel": "BI Insights Corp company logo",
+        "logoSize": 46
+      },
+      {
+        "id": "job_029",
+        "title": "Platform Engineer",
+        "location": "Columbus, OH",
+        "jobType": "onsite",
+        "employmentType": "full_time",
+        "experienceLevel": "senior",
+        "companyName": "Platform Dynamics",
+        "skills_required": ["Platform Architecture", "Containerization", "Service Mesh", "Observability", "GitOps", "Cloud Native"],
+        "userSkills": ["Containerization", "Cloud Native", "GitOps"],
+        "maxSkillsToShow": 5,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/platformdynamics.com",
+        "accessibilityLabel": "Platform Dynamics company logo",
+        "logoSize": 50
+      },
+      {
+        "id": "job_030",
+        "title": "Machine Learning Intern",
+        "location": "Pittsburgh, PA",
+        "jobType": "hybrid",
+        "employmentType": "internship",
+        "experienceLevel": "entry",
+        "companyName": "AI Research Institute",
+        "skills_required": ["Python", "Jupyter Notebooks", "Scikit-learn", "Statistics", "Data Analysis"],
+        "userSkills": ["Python", "Statistics", "Data Analysis"],
+        "maxSkillsToShow": 3,
+        "type": "normal",
+        "source": "https://logo.clearbit.com/airesearch.com",
+        "accessibilityLabel": "AI Research Institute company logo",
+        "logoSize": 44
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 2,
+      "totalJobs": 30,
+      "jobsPerPage": 30
+    }
+  },
+  "message": "Jobs retrieved successfully",
+  "timestamp": "2025-08-06T10:30:00Z"
+}

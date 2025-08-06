@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FlatList, ActivityIndicator } from "react-native";
 import { Tile, TileProps } from "@/components/Tile";
-import { NORMAL_TILE_HEIGHT } from "@/components/Tile/components/TileContainer";
+import { NORMAL_TILE_HEIGHT, GAP } from "@/components/Tile/components/TileContainer";
+import { mockJobsResponse } from "@/mocks/jobs";
 
 // API endpoint placeholder - replace with actual endpoint
 const DEFAULT_ENDPOINT = "SOMETHINGS"; // TODO: Replace with actual API endpoint
@@ -10,7 +11,6 @@ const DEFAULT_ENDPOINT = "SOMETHINGS"; // TODO: Replace with actual API endpoint
 // 0.1 means trigger when user is 10% away from the bottom
 const ON_END_REACHED_THRESHOLD = 0.1;
 const NUM_COLUMNS = 2;
-export const GAP = 4; // Gap between tiles, if needed
 
 // Type definition for pagination data returned by API
 type ResponsePagesData = {
@@ -75,6 +75,8 @@ export const TileLayout = () => {
     }
   };
 
+
+
   /**
    * Loads the next page of data when user reaches end of list
    * Called by FlatList's onEndReached prop
@@ -89,6 +91,7 @@ export const TileLayout = () => {
     // Fetch next page with page parameter
     fetchTilesData(`${DEFAULT_ENDPOINT}?page=${nextPage}`);
   };
+
 
   // Effect hook to fetch initial data when component mounts
   useEffect(() => {
